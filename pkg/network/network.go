@@ -3,7 +3,6 @@ package network
 import (
 	"encoding/json"
 	"fmt"
-	"math"
 	"time"
 
 	"github.com/1cbyc/neural-network-go/pkg/activation"
