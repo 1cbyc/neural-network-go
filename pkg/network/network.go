@@ -146,7 +146,7 @@ func (nn *NeuralNetwork) Backward(input []float64, target []float64) ([][][]floa
 
 	// Calculate output layer error
 	output := activations[len(activations)-1]
-	lossFunc, lossDeriv := loss.GetLossFunction(nn.LossFunction)
+	_, lossDeriv := loss.GetLossFunction(nn.LossFunction)
 	
 	// For softmax with cross-entropy, use special derivative
 	if nn.ActivationFunctions[len(nn.ActivationFunctions)-1] == "softmax" && nn.LossFunction == "categorical_crossentropy" {
@@ -154,7 +154,7 @@ func (nn *NeuralNetwork) Backward(input []float64, target []float64) ([][][]floa
 		activations[len(activations)-1] = outputErrors
 	} else {
 		outputErrors := lossDeriv(output, target)
-		activationDeriv, _ := activation.GetActivationFunction(nn.ActivationFunctions[len(nn.ActivationFunctions)-1])
+		_, activationDeriv := activation.GetActivationFunction(nn.ActivationFunctions[len(nn.ActivationFunctions)-1])
 		outputDeltas := activation.ApplyActivationDerivative(output, activationDeriv)
 		
 		// Element-wise multiplication of errors and activation derivatives
@@ -188,7 +188,7 @@ func (nn *NeuralNetwork) Backward(input []float64, target []float64) ([][][]floa
 			}
 
 			// Apply activation derivative
-			activationDeriv, _ := activation.GetActivationFunction(nn.ActivationFunctions[i-1])
+			_, activationDeriv := activation.GetActivationFunction(nn.ActivationFunctions[i-1])
 			prevDeltas := activation.ApplyActivationDerivative(activations[i], activationDeriv)
 			
 			for j := range prevErrors {
