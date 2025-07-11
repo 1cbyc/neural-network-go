@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/yourusername/neural-network-go/pkg/network"
-	"github.com/yourusername/neural-network-go/pkg/utils"
+	"github.com/1cbyc/neural-network-go/pkg/network"
+	"github.com/1cbyc/neural-network-go/pkg/utils"
 )
 
 func main() {

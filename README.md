@@ -33,7 +33,7 @@ package main
 
 import (
     "fmt"
-    "github.com/yourusername/neural-network-go/pkg/network"
+    "github.com/1cbyc/neural-network-go/pkg/network"
 )
 
 func main() {

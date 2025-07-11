@@ -4,11 +4,11 @@ import (
 	"math"
 	"testing"
 
-	"github.com/yourusername/neural-network-go/pkg/activation"
-	"github.com/yourusername/neural-network-go/pkg/loss"
-	"github.com/yourusername/neural-network-go/pkg/network"
-	"github.com/yourusername/neural-network-go/pkg/optimizer"
-	"github.com/yourusername/neural-network-go/pkg/utils"
+	"github.com/1cbyc/neural-network-go/pkg/activation"
+	"github.com/1cbyc/neural-network-go/pkg/loss"
+	"github.com/1cbyc/neural-network-go/pkg/network"
+	"github.com/1cbyc/neural-network-go/pkg/optimizer"
+	"github.com/1cbyc/neural-network-go/pkg/utils"
 )
 
 func TestNeuralNetworkCreation(t *testing.T) {

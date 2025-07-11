@@ -6,10 +6,10 @@ import (
 	"math"
 	"time"
 
-	"github.com/yourusername/neural-network-go/pkg/activation"
-	"github.com/yourusername/neural-network-go/pkg/loss"
-	"github.com/yourusername/neural-network-go/pkg/optimizer"
-	"github.com/yourusername/neural-network-go/pkg/utils"
+	"github.com/1cbyc/neural-network-go/pkg/activation"
+	"github.com/1cbyc/neural-network-go/pkg/loss"
+	"github.com/1cbyc/neural-network-go/pkg/optimizer"
+	"github.com/1cbyc/neural-network-go/pkg/utils"
 )
 
 // NeuralNetwork represents a multi-layer neural network
