@@ -18,14 +18,17 @@ func SecureRandom() float64 {
 	if err != nil {
 		panic("cannot generate random number: " + err.Error())
 	}
-	return float64(binary.LittleEndian.Uint64(b[:])) / (1 << 63)
+	// Convert to [0,1)
+	r := float64(binary.LittleEndian.Uint64(b[:])) / float64(^uint64(0))
+	// Scale to [-1,1)
+	return r*2 - 1
 }
 
 // InitializeWeights initializes weights with Xavier/Glorot initialization
 func InitializeWeights(rows, cols int) [][]float64 {
 	weights := make([][]float64, rows)
 	limit := math.Sqrt(6.0 / float64(rows+cols))
-	
+
 	for i := range weights {
 		weights[i] = make([]float64, cols)
 		for j := range weights[i] {
@@ -49,10 +52,10 @@ func MatrixMultiply(a [][]float64, b [][]float64) [][]float64 {
 	if len(a) == 0 || len(b) == 0 || len(a[0]) != len(b) {
 		return nil
 	}
-	
+
 	rows, cols := len(a), len(b[0])
 	result := make([][]float64, rows)
-	
+
 	for i := range result {
 		result[i] = make([]float64, cols)
 		for j := range result[i] {
@@ -63,7 +66,7 @@ func MatrixMultiply(a [][]float64, b [][]float64) [][]float64 {
 			result[i][j] = sum
 		}
 	}
-	
+
 	return result
 }
 
@@ -72,7 +75,7 @@ func VectorAdd(a, b []float64) []float64 {
 	if len(a) != len(b) {
 		return nil
 	}
-	
+
 	result := make([]float64, len(a))
 	for i := range result {
 		result[i] = a[i] + b[i]
@@ -85,7 +88,7 @@ func VectorSubtract(a, b []float64) []float64 {
 	if len(a) != len(b) {
 		return nil
 	}
-	
+
 	result := make([]float64, len(a))
 	for i := range result {
 		result[i] = a[i] - b[i]
@@ -98,7 +101,7 @@ func VectorMultiply(a, b []float64) []float64 {
 	if len(a) != len(b) {
 		return nil
 	}
-	
+
 	result := make([]float64, len(a))
 	for i := range result {
 		result[i] = a[i] * b[i]
@@ -120,17 +123,17 @@ func MatrixTranspose(matrix [][]float64) [][]float64 {
 	if len(matrix) == 0 {
 		return nil
 	}
-	
+
 	rows, cols := len(matrix), len(matrix[0])
 	result := make([][]float64, cols)
-	
+
 	for i := range result {
 		result[i] = make([]float64, rows)
 		for j := range result[i] {
 			result[i][j] = matrix[j][i]
 		}
 	}
-	
+
 	return result
 }
 
@@ -151,7 +154,7 @@ func CalculateMean(values []float64) float64 {
 	if len(values) == 0 {
 		return 0
 	}
-	
+
 	sum := 0.0
 	for _, v := range values {
 		sum += v
@@ -164,7 +167,7 @@ func CalculateStdDev(values []float64) float64 {
 	if len(values) == 0 {
 		return 0
 	}
-	
+
 	mean := CalculateMean(values)
 	sum := 0.0
 	for _, v := range values {
@@ -179,11 +182,11 @@ func NormalizeData(data [][]float64) [][]float64 {
 	if len(data) == 0 {
 		return nil
 	}
-	
+
 	cols := len(data[0])
 	means := make([]float64, cols)
 	stds := make([]float64, cols)
-	
+
 	// Calculate means and standard deviations for each column
 	for j := 0; j < cols; j++ {
 		column := make([]float64, len(data))
@@ -196,7 +199,7 @@ func NormalizeData(data [][]float64) [][]float64 {
 			stds[j] = 1 // Avoid division by zero
 		}
 	}
-	
+
 	// Normalize data
 	normalized := make([][]float64, len(data))
 	for i := range data {
@@ -205,7 +208,7 @@ func NormalizeData(data [][]float64) [][]float64 {
 			normalized[i][j] = (data[i][j] - means[j]) / stds[j]
 		}
 	}
-	
+
 	return normalized
 }
 
@@ -214,17 +217,17 @@ func MinMaxNormalize(data [][]float64) [][]float64 {
 	if len(data) == 0 {
 		return nil
 	}
-	
+
 	cols := len(data[0])
 	mins := make([]float64, cols)
 	maxs := make([]float64, cols)
-	
+
 	// Initialize with first row
 	for j := range data[0] {
 		mins[j] = data[0][j]
 		maxs[j] = data[0][j]
 	}
-	
+
 	// Find min and max for each column
 	for i := range data {
 		for j := range data[i] {
@@ -236,7 +239,7 @@ func MinMaxNormalize(data [][]float64) [][]float64 {
 			}
 		}
 	}
-	
+
 	// Normalize data
 	normalized := make([][]float64, len(data))
 	for i := range data {
@@ -249,7 +252,7 @@ func MinMaxNormalize(data [][]float64) [][]float64 {
 			}
 		}
 	}
-	
+
 	return normalized
 }
 
@@ -258,28 +261,28 @@ func ShuffleData(data, targets [][]float64) ([][]float64, [][]float64) {
 	if len(data) != len(targets) {
 		return data, targets
 	}
-	
+
 	// Create indices
 	indices := make([]int, len(data))
 	for i := range indices {
 		indices[i] = i
 	}
-	
+
 	// Fisher-Yates shuffle
 	for i := len(indices) - 1; i > 0; i-- {
 		j := int(SecureRandom() * float64(i+1))
 		indices[i], indices[j] = indices[j], indices[i]
 	}
-	
+
 	// Shuffle data and targets
 	shuffledData := make([][]float64, len(data))
 	shuffledTargets := make([][]float64, len(targets))
-	
+
 	for i, idx := range indices {
 		shuffledData[i] = data[idx]
 		shuffledTargets[i] = targets[idx]
 	}
-	
+
 	return shuffledData, shuffledTargets
 }
 
@@ -288,19 +291,19 @@ func SplitData(data, targets [][]float64, validationRatio float64) ([][]float64,
 	if len(data) != len(targets) {
 		return nil, nil, nil, nil
 	}
-	
+
 	// Shuffle data first
 	shuffledData, shuffledTargets := ShuffleData(data, targets)
-	
+
 	// Calculate split point
 	splitIndex := int(float64(len(data)) * (1 - validationRatio))
-	
+
 	// Split data
 	trainData := shuffledData[:splitIndex]
 	trainTargets := shuffledTargets[:splitIndex]
 	valData := shuffledData[splitIndex:]
 	valTargets := shuffledTargets[splitIndex:]
-	
+
 	return trainData, trainTargets, valData, valTargets
 }
 
@@ -311,7 +314,7 @@ func SaveModel(model interface{}, filename string) error {
 		return err
 	}
 	defer file.Close()
-	
+
 	encoder := json.NewEncoder(file)
 	return encoder.Encode(model)
 }
@@ -323,7 +326,7 @@ func LoadModel(filename string, model interface{}) error {
 		return err
 	}
 	defer file.Close()
-	
+
 	decoder := json.NewDecoder(file)
 	return decoder.Decode(model)
 }
@@ -333,7 +336,7 @@ func PrintProgress(epoch, totalEpochs int, loss float64) {
 	progress := float64(epoch) / float64(totalEpochs)
 	barLength := 50
 	filledLength := int(progress * float64(barLength))
-	
+
 	bar := strings.Repeat("█", filledLength) + strings.Repeat("░", barLength-filledLength)
 	fmt.Printf("\rEpoch %d/%d [%s] Loss: %.6f", epoch, totalEpochs, bar, loss)
 }
@@ -342,7 +345,7 @@ func PrintProgress(epoch, totalEpochs int, loss float64) {
 func PrintNetworkSummary(layerSizes []int, activationFunctions []string) {
 	fmt.Println("Neural Network Architecture:")
 	fmt.Println("============================")
-	
+
 	for i, size := range layerSizes {
 		layerType := "Hidden"
 		if i == 0 {
@@ -350,12 +353,12 @@ func PrintNetworkSummary(layerSizes []int, activationFunctions []string) {
 		} else if i == len(layerSizes)-1 {
 			layerType = "Output"
 		}
-		
+
 		activation := "sigmoid"
 		if i < len(activationFunctions) {
 			activation = activationFunctions[i]
 		}
-		
+
 		fmt.Printf("Layer %d (%s): %d neurons, Activation: %s\n", i, layerType, size, activation)
 	}
 	fmt.Println()
@@ -379,19 +382,19 @@ func CalculateAccuracy(predictions, targets [][]float64) float64 {
 	if len(predictions) != len(targets) {
 		return 0
 	}
-	
+
 	correct := 0
 	total := 0
-	
+
 	for i := range predictions {
 		if len(predictions[i]) != len(targets[i]) {
 			continue
 		}
-		
+
 		// Find predicted and actual classes
 		predClass := 0
 		actualClass := 0
-		
+
 		for j := range predictions[i] {
 			if predictions[i][j] > predictions[i][predClass] {
 				predClass = j
@@ -400,16 +403,16 @@ func CalculateAccuracy(predictions, targets [][]float64) float64 {
 				actualClass = j
 			}
 		}
-		
+
 		if predClass == actualClass {
 			correct++
 		}
 		total++
 	}
-	
+
 	if total == 0 {
 		return 0
 	}
-	
+
 	return float64(correct) / float64(total)
-} 
+}
