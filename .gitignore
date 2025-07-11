@@ -68,3 +68,7 @@ data/
 *.csv
 *.json
 *.dat 
+
+# project files
+docs/roadmap.md
+docs/what-next.md
