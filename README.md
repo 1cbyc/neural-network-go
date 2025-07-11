@@ -1,5 +1,7 @@
 # Neural Network Library in Go
 
+(asked ai to check my project and write this readme for me)
+
 A comprehensive neural network implementation in Go featuring back-propagation, multiple activation functions, and real-time training visualization.
 
 ## Features
@@ -19,7 +21,7 @@ A comprehensive neural network implementation in Go featuring back-propagation, 
 ### Installation
 
 ```bash
-git clone https://github.com/yourusername/neural-network-go
+git clone https://github.com/1cbyc/neural-network-go.git
 cd neural-network-go
 go mod tidy
 ```
