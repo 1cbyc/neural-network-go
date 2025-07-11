@@ -140,9 +140,9 @@ func TestLossFunctions(t *testing.T) {
 	predictions := []float64{0.8, 0.2}
 	targets := []float64{1.0, 0.0}
 	
-	loss := mse(predictions, targets)
-	if loss <= 0 {
-		t.Errorf("Expected positive MSE loss, got %f", loss)
+	mseLoss := mse(predictions, targets)
+	if mseLoss <= 0 {
+		t.Errorf("Expected positive MSE loss, got %f", mseLoss)
 	}
 	
 	derivatives := mseDeriv(predictions, targets)
